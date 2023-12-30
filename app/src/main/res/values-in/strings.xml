@@ -1,0 +1,39 @@
+<resources>
+    <string name="initialize">Mohon inisialisasi graph</string>
+    <string name="link">Hubungkan</string>
+    <string name="delete">Hapus</string>
+    <string name="entry">Entri</string>
+    <string name="path">Jalur</string>
+    <string name="cancel">Batal</string>
+    <string name="confirm_place">Posisi teks sesuai?</string>
+    <string name="from">Awal</string>
+    <string name="to">Akhir</string>
+    <string name="main">Gedung Utama</string>
+    <string name="lab">Laboratorium</string>
+    <string name="first_tower">Menara 1</string>
+    <string name="second_tower">Menara 2</string>
+    <string name="second_building">Gedung Kedua</string>
+    <string name="floor">Lantai ke-</string>
+    <string name="incorrect_number">Angka tidak ditemukan.</string>
+    <string name="no_path">Rute tidak tersedia.</string>
+    <string name="going">Menuju %s.</string>
+    <string name="init_failed">Inisialisasi gagal.</string>
+    <string name="install_arcode">Mohon pasang ARCore.</string>
+    <string name="update_arcode">Mohon perbarui ARCore.</string>
+    <string name="update_app">Mohon perbarui aplikasi.</string>
+    <string name="no_arcore_support">Perangkat ini tidak mendukung AR.</string>
+    <string name="camera_not_available">Kamera tidak tersedia. Coba mulai ulang aplikasi.</string>
+    <string name="failed_to_create_session">Gagal memuat sesi AR.</string>
+    <string name="provide_camera_permission">Mohon berikan izin kamera.</string>
+    <string name="accept">Terima</string>
+    <string name="reject">Tolak</string>
+    <string name="entry_already_exists">Entri sudah ada.</string>
+    <string name="node_created">Membuat titik</string>
+    <string name="node_deleted">Menghapus titik</string>
+    <string name="link_created">Membuat hubungan</string>
+    <string name="scan">Tunggu titik-titik muncul. Coba arahkan kamera ke area yang memiliki fitur dan
+        gerakan kamera perlahan.
+    </string>
+
+
+</resources>
