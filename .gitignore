@@ -1,4 +1,10 @@
 # Project exclude paths
 /.gradle/
 /app/build/
-/app/build/intermediates/javac/debug/classes/
+/build/
+/local.properties
+/handson.md
+/app/src/androidTest/
+/app/src/test
+/.idea/
+/.gitignore
