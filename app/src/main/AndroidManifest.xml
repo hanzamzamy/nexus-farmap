@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:glEsVersion="0x00030000" android:required="true" />
     <uses-feature android:name="android.hardware.camera.ar" android:required="true"/>
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
 
     <application
         android:name="com.nexus.farmap.data.App"
@@ -16,14 +17,14 @@
 
         android:roundIcon="@drawable/ic_app_icon"
         android:supportsRtl="true"
-        android:theme="@style/Theme.FESTUNavigator"
+        android:theme="@style/Theme.FARMap"
         android:usesCleartextTraffic="false"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name="com.nexus.farmap.presentation.MainActivity"
             android:configChanges="orientation|screenSize|screenLayout"
             android:windowSoftInputMode="stateHidden|adjustPan"
-            android:theme="@style/Theme.FESTUNavigator"
+            android:theme="@style/Theme.FARMap"
             android:screenOrientation="portrait"
             android:exported="true"
             tools:ignore="LockedOrientationActivity">
