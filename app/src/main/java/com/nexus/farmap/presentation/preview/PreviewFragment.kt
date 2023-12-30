@@ -359,7 +359,7 @@ class PreviewFragment : Fragment() {
 
     companion object {
         //how many path nodes will be displayed at the moment
-        const val VIEWABLE_PATH_NODES = 31
+        const val VIEWABLE_PATH_NODES = 32
         //distance of viewable nodes for admin mode
         const val VIEWABLE_ADMIN_NODES = 8f
         //how often the check for path and tree redraw will be

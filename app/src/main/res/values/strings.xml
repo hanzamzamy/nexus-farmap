@@ -32,7 +32,7 @@
     <string name="node_created">Node created</string>
     <string name="node_deleted">Node deleted</string>
     <string name="link_created">Link created</string>
-    <string name="scan">Wait for the dots to appear. Try to point camera to scene that contain features and move gently.
+    <string name="scan">Wait for the dots to appear. Try to point camera to area that contain features and move gently.
     </string>
 
 
