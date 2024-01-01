@@ -39,11 +39,11 @@ class SearchFragment : Fragment() {
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
-    private val adapter = EntriesAdapter(){ number ->
+    private val adapter = EntriesAdapter { number ->
          processSearchResult(number)
     }
 
-    private val args: com.nexus.farmap.presentation.search.SearchFragmentArgs by navArgs()
+    private val args: SearchFragmentArgs by navArgs()
     val changeType by lazy { args.changeType }
 
     override fun onCreate(savedInstanceState: Bundle?) {

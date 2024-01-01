@@ -26,7 +26,7 @@ class ConfirmFragment : Fragment() {
     private var _binding: FragmentConfirmBinding? = null
     private val binding get() = _binding!!
 
-    private val args: com.nexus.farmap.presentation.confirmer.ConfirmFragmentArgs by navArgs()
+    private val args: ConfirmFragmentArgs by navArgs()
     private val confType by lazy { args.confirmType }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,7 +71,7 @@ class ConfirmFragment : Fragment() {
                         when (uiEvent) {
                             is MainUiEvent.InitSuccess -> {
                                 val action =
-                                    com.nexus.farmap.presentation.confirmer.ConfirmFragmentDirections.actionConfirmFragmentToRouterFragment()
+                                    ConfirmFragmentDirections.actionConfirmFragmentToRouterFragment()
                                 findNavController().navigate(action)
                             }
                             is MainUiEvent.InitFailed -> {
@@ -79,12 +79,12 @@ class ConfirmFragment : Fragment() {
                             }
                             is MainUiEvent.EntryCreated -> {
                                 val action =
-                                    com.nexus.farmap.presentation.confirmer.ConfirmFragmentDirections.actionConfirmFragmentToRouterFragment()
+                                    ConfirmFragmentDirections.actionConfirmFragmentToRouterFragment()
                                 findNavController().navigate(action)
                             }
                             is MainUiEvent.EntryAlreadyExists -> {
                                 val action =
-                                    com.nexus.farmap.presentation.confirmer.ConfirmFragmentDirections.actionConfirmFragmentToRouterFragment()
+                                    ConfirmFragmentDirections.actionConfirmFragmentToRouterFragment()
                                 findNavController().navigate(action)
                             }
                             else -> {}

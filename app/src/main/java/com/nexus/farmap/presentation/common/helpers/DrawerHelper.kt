@@ -281,7 +281,7 @@ class DrawerHelper(
         val lineLength = Vector3.subtract(fromVector, toVector).length()
 
         // Prepare a color
-        val colorOrange = com.google.ar.sceneform.rendering.Color(Color.parseColor("#ffffff"))
+        val colorOrange = Color(Color.parseColor("#ffffff"))
 
         // 1. make a material by the color
         MaterialFactory.makeOpaqueWithColor(fragment.requireContext(), colorOrange)

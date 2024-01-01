@@ -34,7 +34,7 @@ class ARCoreSessionLifecycleHelper(
     // Creates a session. If ARCore is not installed, an installation will be requested.
     fun tryCreateSession(): Session? {
         // Request an installation if necessary.
-        when (ArCoreApk.getInstance().requestInstall(activity, !installRequested)!!) {
+        when (ArCoreApk.getInstance().requestInstall(activity, !installRequested)) {
             ArCoreApk.InstallStatus.INSTALL_REQUESTED -> {
                 installRequested = true
                 // tryCreateSession will be called again, so we return null for now.

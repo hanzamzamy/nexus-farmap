@@ -176,12 +176,12 @@ class SmoothPath {
     {
         val result = mutableListOf<BezierPoint>()
 
-        val space= if (spacing > 0.00001) spacing else 0.00001;
+        val space= if (spacing > 0.00001) spacing else 0.00001
 
         var distanceNeeded = offset
         while (distanceNeeded < 0)
         {
-            distanceNeeded += space;
+            distanceNeeded += space
         }
 
         var current = points[0]

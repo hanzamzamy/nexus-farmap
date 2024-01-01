@@ -1,36 +1,26 @@
 {
   "project_info": {
-    "project_number": "585021364061",
-    "project_id": "festu-navigator",
-    "storage_bucket": "festu-navigator.appspot.com"
+    "project_number": "522018463669",
+    "project_id": "nexus-armap",
+    "storage_bucket": "nexus-armap.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:585021364061:android:fe3e2c14e15689df0bfab4",
+        "mobilesdk_app_id": "1:522018463669:android:ef72ce061ce899a7f243fc",
         "android_client_info": {
           "package_name": "com.nexus.farmap"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "585021364061-4kbu8lj4l6jq21jnh6h50ebopit7eikp.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCWcXWGuBnlcduZj-Y30jfa3e5Sa6QHeKY"
+          "current_key": "AIzaSyC-bLGKPFZKLlugxSwXCodWJEibLKDmYZU"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "585021364061-4kbu8lj4l6jq21jnh6h50ebopit7eikp.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

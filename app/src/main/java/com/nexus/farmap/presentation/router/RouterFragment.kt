@@ -140,7 +140,7 @@ class RouterFragment : Fragment() {
 
     private fun search(type: Int){
         val action =
-            com.nexus.farmap.presentation.router.RouterFragmentDirections.actionRouterFragmentToSearchFragment(
+            RouterFragmentDirections.actionRouterFragmentToSearchFragment(
                 type
             )
         findNavController().navigate(action)

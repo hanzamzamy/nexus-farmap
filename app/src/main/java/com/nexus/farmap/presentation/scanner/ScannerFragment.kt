@@ -38,7 +38,7 @@ class ScannerFragment : Fragment() {
     private var _binding: FragmentScannerBinding? = null
     private val binding get() = _binding!!
 
-    private val args: com.nexus.farmap.presentation.scanner.ScannerFragmentArgs by navArgs()
+    private val args: ScannerFragmentArgs by navArgs()
     private val scanType by lazy { args.scanType }
 
     private val hitTest = App.instance!!.hitTest
@@ -167,7 +167,7 @@ class ScannerFragment : Fragment() {
             if (!navigating){
                 navigating = true
                 val action =
-                    com.nexus.farmap.presentation.scanner.ScannerFragmentDirections.actionScannerFragmentToConfirmFragment(
+                    ScannerFragmentDirections.actionScannerFragmentToConfirmFragment(
                         type
                     )
                 findNavController().navigate(action)
