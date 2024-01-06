@@ -9,12 +9,7 @@
     <string name="confirm_place">Text was placed correctly?</string>
     <string name="from">Start</string>
     <string name="to">End</string>
-    <string name="main">Main building</string>
-    <string name="lab">Laboratory</string>
-    <string name="first_tower">Tower №1</string>
-    <string name="second_tower">Tower №2</string>
-    <string name="second_building">Second building</string>
-    <string name="floor">floor №</string>
+    <string name="floor">"Floor № "</string>
     <string name="incorrect_number">Can`t find that number.</string>
     <string name="no_path">No route.</string>
     <string name="going">Going to %s.</string>
@@ -34,6 +29,7 @@
     <string name="link_created">Link created</string>
     <string name="scan">Wait for the dots to appear. Try to point camera to area that contain features and move gently.
     </string>
+    <string name="room">"Room № "</string>
 
 
 </resources>

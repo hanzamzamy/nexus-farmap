@@ -8,11 +8,6 @@
     <string name="confirm_place">Posisi teks sesuai?</string>
     <string name="from">Awal</string>
     <string name="to">Akhir</string>
-    <string name="main">Gedung Utama</string>
-    <string name="lab">Laboratorium</string>
-    <string name="first_tower">Menara 1</string>
-    <string name="second_tower">Menara 2</string>
-    <string name="second_building">Gedung Kedua</string>
     <string name="floor">Lantai ke-</string>
     <string name="incorrect_number">Angka tidak ditemukan.</string>
     <string name="no_path">Rute tidak tersedia.</string>
@@ -34,6 +29,7 @@
     <string name="scan">Tunggu titik-titik muncul. Coba arahkan kamera ke area yang memiliki fitur dan
         gerakan kamera perlahan.
     </string>
+    <string name="room">Ruang ke-</string>
 
 
 </resources>

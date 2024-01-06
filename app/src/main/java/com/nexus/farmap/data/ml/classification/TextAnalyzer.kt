@@ -141,7 +141,7 @@ class TextAnalyzer: ObjectDetector {
     }
 
     private fun filterFunction(text: Text.TextBlock): Boolean {
-        return text.text[0].isDigit()
+        return text.text[0].isLetterOrDigit()
     }
 
 }

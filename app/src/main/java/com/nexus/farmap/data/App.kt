@@ -36,6 +36,7 @@ class App : Application() {
             //.createFromAsset(DATABASE_DIR)
             .allowMainThreadQueries()
             .build()
+
         repository = GraphImpl()
         tree = Tree(repository)
 

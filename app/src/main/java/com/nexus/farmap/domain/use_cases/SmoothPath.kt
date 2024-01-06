@@ -1,7 +1,9 @@
 package com.nexus.farmap.domain.use_cases
 
+import com.google.ar.sceneform.math.Quaternion.lookRotation
+import com.google.ar.sceneform.math.Quaternion.multiply
+import com.google.ar.sceneform.math.Quaternion.axisAngle
 import com.nexus.farmap.domain.hit_test.OrientatedPosition
-import com.nexus.farmap.domain.use_cases.lookRotation
 import com.nexus.farmap.domain.smoothing.BezierPoint
 import com.nexus.farmap.domain.tree.TreeNode
 import com.google.ar.sceneform.math.Vector3
@@ -48,14 +50,14 @@ class SmoothPath {
                 val difference = Vector3.subtract(toVector, fromVector)
                 val directionFromTopToBottom = difference.normalized()
                 val rotationFromAToB: com.google.ar.sceneform.math.Quaternion =
-                    com.google.ar.sceneform.math.Quaternion.lookRotation(
+                    lookRotation(
                         directionFromTopToBottom,
                         Vector3.up()
                     )
 
-                val rotation = com.google.ar.sceneform.math.Quaternion.multiply(
+                val rotation = multiply(
                     rotationFromAToB,
-                    com.google.ar.sceneform.math.Quaternion.axisAngle(Vector3(1.0f, 0.0f, 0.0f), 270f)
+                    axisAngle(Vector3(1.0f, 0.0f, 0.0f), 270f)
                 ).toNewQuaternion()
 
                 val lowStep =  if (nodesAmount < 3) 0 else if (nodesAmount == 3) 1 else 2

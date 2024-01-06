@@ -369,7 +369,7 @@ class PreviewFragment : Fragment() {
         const val VIEWABLE_ADMIN_NODES = 8f
         //how often the check for path and tree redraw will be
         const val POSITION_DETECT_DELAY = 100L
-        //image crop for recognition
-        val DESIRED_CROP = Pair(8, 72)
+        //image crop percentage for recognition
+        val DESIRED_CROP = Pair(0, 0)
     }
 }

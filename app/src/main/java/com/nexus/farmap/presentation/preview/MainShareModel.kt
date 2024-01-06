@@ -164,7 +164,7 @@ class MainShareModel: ViewModel() {
                 )
             }
         }
-        //Поиск окончился удачно
+        //Search successes
         pathfindJob?.cancel()
         pathfindJob = viewModelScope.launch {
             pathfind()
