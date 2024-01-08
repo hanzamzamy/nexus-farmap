@@ -93,7 +93,7 @@ class DrawerHelper(
         val modelNode = ArNode()
         modelNode.loadModel(
             context = fragment.requireContext(),
-            glbFileLocation = "models/cylinder.glb",
+            glbFileLocation = "models/nexus.glb",
         )
         modelNode.position = treeNode.position
         modelNode.modelScale = Scale(0.1f)
