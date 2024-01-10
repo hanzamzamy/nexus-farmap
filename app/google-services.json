@@ -12,7 +12,20 @@
           "package_name": "com.nexus.farmap"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "522018463669-d9srcriqsjf58690v005fio4aeq7s65v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nexus.farmap",
+            "certificate_hash": "d88bb1a5155d06ad2a87ce41e7a417b2f2ebe880"
+          }
+        },
+        {
+          "client_id": "522018463669-mip1eiij2g3m8p8luilmcb61g9jjqkbj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyC-bLGKPFZKLlugxSwXCodWJEibLKDmYZU"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "522018463669-mip1eiij2g3m8p8luilmcb61g9jjqkbj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

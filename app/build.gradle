@@ -3,7 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'com.google.devtools.ksp'
     id 'com.google.gms.google-services'
-    id 'com.google.firebase.crashlytics'
+    //id 'com.google.firebase.crashlytics'
     id 'androidx.navigation.safeargs'
 }
 
@@ -54,8 +54,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.firebase:firebase-analytics-ktx:21.0.0'
-    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.11'
+    //implementation 'com.google.firebase:firebase-analytics-ktx:21.0.0'
+    //implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.11'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
@@ -94,6 +94,11 @@ dependencies {
 
     //bezier curve for smooth path building
     implementation 'dev.benedikt.math:bezier-spline:1.2.0'
+
+    implementation(platform('com.google.firebase:firebase-bom:32.7.0'))
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-firestore'
 
     //Splashscreen
     implementation "androidx.core:core-splashscreen:1.0.0-rc01"
