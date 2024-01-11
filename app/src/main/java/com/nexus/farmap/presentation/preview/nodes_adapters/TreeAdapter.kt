@@ -13,7 +13,7 @@ class TreeAdapter(
     previewView: ArSceneView,
     bufferSize: Int,
     scope: LifecycleCoroutineScope,
-): NodesAdapter<TreeNode>(drawerHelper, previewView, bufferSize, scope) {
+) : NodesAdapter<TreeNode>(drawerHelper, previewView, bufferSize, scope) {
 
     private val modelsToLinkModels: MutableBiMap<Pair<ArNode, ArNode>, ArNode> = mutableBiMapOf()
 
@@ -22,12 +22,9 @@ class TreeAdapter(
         for (id in item.neighbours) {
             nodes.keys.firstOrNull { it.id == id }?.let { treeNode ->
                 nodes[treeNode]?.let { node2 ->
-                    if (modelsToLinkModels[Pair(node1, node2)] == null ){
+                    if (modelsToLinkModels[Pair(node1, node2)] == null) {
                         drawerHelper.drawLine(
-                            node1,
-                            node2,
-                            modelsToLinkModels,
-                            previewView
+                            node1, node2, modelsToLinkModels, previewView
                         )
                     }
                 }
@@ -38,9 +35,7 @@ class TreeAdapter(
 
     override suspend fun onRemoved(item: TreeNode, node: ArNode) {
         drawerHelper.removeNode(node)
-        modelsToLinkModels.keys
-            .filter { it.first == node || it.second == node }
-            .forEach { pair ->
+        modelsToLinkModels.keys.filter { it.first == node || it.second == node }.forEach { pair ->
                 drawerHelper.removeLink(pair, modelsToLinkModels)
             }
     }
@@ -50,10 +45,7 @@ class TreeAdapter(
         val node2 = nodes[treeNode2]
         if (node1 != null && node2 != null) {
             drawerHelper.drawLine(
-                node1,
-                node2,
-                modelsToLinkModels,
-                previewView
+                node1, node2, modelsToLinkModels, previewView
             )
         }
     }

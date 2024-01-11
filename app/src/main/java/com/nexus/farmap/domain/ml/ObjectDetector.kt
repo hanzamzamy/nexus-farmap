@@ -14,9 +14,6 @@ interface ObjectDetector {
      * a label, and a pixel coordinate on the image which is believed to be the center of the object.
      */
     suspend fun analyze(
-        mediaImage: Image,
-        rotationDegrees: Int,
-        imageCropPercentages: Pair<Int, Int>,
-        displaySize: Pair<Int, Int>
+        mediaImage: Image, rotationDegrees: Int, imageCropPercentages: Pair<Int, Int>, displaySize: Pair<Int, Int>
     ): Result<DetectedObjectResult>
 }

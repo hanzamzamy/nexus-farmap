@@ -13,8 +13,7 @@ import com.google.ar.core.exceptions.CameraNotAvailableException
  * and asks the user for permissions, if necessary.
  */
 class ARCoreSessionLifecycleHelper(
-    private val activity: Activity,
-    private val features: Set<Session.Feature> = setOf()
+    private val activity: Activity, private val features: Set<Session.Feature> = setOf()
 ) : DefaultLifecycleObserver {
     var installRequested = false
     var sessionCache: Session? = null
@@ -40,6 +39,7 @@ class ARCoreSessionLifecycleHelper(
                 // tryCreateSession will be called again, so we return null for now.
                 return null
             }
+
             ArCoreApk.InstallStatus.INSTALLED -> {
                 // Left empty; nothing needs to be done
             }

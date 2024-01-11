@@ -8,3 +8,4 @@
 /app/src/test
 /.idea/
 /.gitignore
+/app/google-services.json

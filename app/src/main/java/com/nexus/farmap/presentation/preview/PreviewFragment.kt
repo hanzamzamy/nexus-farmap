@@ -62,8 +62,7 @@ class PreviewFragment : Fragment() {
     private val treeNodesToModels: MutableBiMap<TreeNode, ArNode> = mutableBiMapOf()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentPreviewBinding.inflate(inflater, container, false)
 
@@ -84,17 +83,11 @@ class PreviewFragment : Fragment() {
 
         //TODO process pause and resume
         pathAdapter = PathAdapter(
-            drawerHelper,
-            binding.sceneView,
-            VIEWABLE_PATH_NODES,
-            viewLifecycleOwner.lifecycleScope
+            drawerHelper, binding.sceneView, VIEWABLE_PATH_NODES, viewLifecycleOwner.lifecycleScope
         )
 
         treeAdapter = TreeAdapter(
-            drawerHelper,
-            binding.sceneView,
-            DEFAULT_BUFFER_SIZE,
-            viewLifecycleOwner.lifecycleScope
+            drawerHelper, binding.sceneView, DEFAULT_BUFFER_SIZE, viewLifecycleOwner.lifecycleScope
         )
 
         binding.sceneView.apply {
@@ -103,7 +96,7 @@ class PreviewFragment : Fragment() {
             onArFrame = { frame ->
                 onDrawFrame(frame)
             }
-            onTouch = {node, _ ->
+            onTouch = { node, _ ->
                 if (App.mode == App.ADMIN_MODE) {
                     node?.let { it ->
                         if (!mainModel.linkPlacementMode.value) {
@@ -118,25 +111,13 @@ class PreviewFragment : Fragment() {
                 }
                 true
             }
-//            onTouchEvent = { pickHitResult, _ ->
-//                if (App.mode == App.ADMIN_MODE) {
-//                    pickHitResult.node?.let { node ->
-//                        if (!mainModel.linkPlacementMode.value) {
-//                            selectNode(node)
-//                        } else {
-//                            val treeNode = mainModel.selectedNode.value
-//                            treeNodesToModels[treeNode]?.let { node1 ->
-//                                linkNodes(node1, node)
-//                            }
-//                        }
-//                    }
-//                }
-//                true
-//            }
+
             onArSessionFailed = { exception ->
                 val message = when (exception) {
-                    is UnavailableArcoreNotInstalledException,
-                    is UnavailableUserDeclinedInstallationException -> getString(R.string.install_arcode)
+                    is UnavailableArcoreNotInstalledException, is UnavailableUserDeclinedInstallationException -> getString(
+                        R.string.install_arcode
+                    )
+
                     is UnavailableApkTooOldException -> getString(R.string.update_arcode)
                     is UnavailableSdkTooOldException -> getString(R.string.update_app)
                     is UnavailableDeviceNotCompatibleException -> getString(R.string.no_arcore_support)
@@ -151,78 +132,77 @@ class PreviewFragment : Fragment() {
         selectNode(null)
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainModel.pathState.collectLatest { pathState ->
-                    //In ADMIN_MODE, all entry labels are drawn automatically, so another redraw from this function
-                    //will cause node
-                 //   if (App.mode == App.USER_MODE) {
-
-                        if (currentPathState?.endEntry != pathState.endEntry) {
-                            endPlacingJob?.cancel()
-                            currentPathState?.endEntry?.let { end ->
-                                treeNodesToModels[end]?.let {
-                                    drawerHelper.removeNode(it)
-                                }
-                            }
-                            endPlacingJob = viewLifecycleOwner.lifecycleScope.launch {
-                                pathState.endEntry?.let { end ->
-                                    treeNodesToModels[end] = drawerHelper.drawNode(
-                                        end,
-                                        binding.sceneView,
-                                    )
-                                }
+                    //All entry labels are drawn automatically in ADMIN_MODE.
+                    if (currentPathState?.endEntry != pathState.endEntry) {
+                        endPlacingJob?.cancel()
+                        currentPathState?.endEntry?.let { end ->
+                            treeNodesToModels[end]?.let {
+                                drawerHelper.removeNode(it)
                             }
                         }
-                        if (currentPathState?.startEntry != pathState.startEntry) {
-                            startPlacingJob?.cancel()
-                            currentPathState?.startEntry?.let { start ->
-                                treeNodesToModels[start]?.let {
-                                    drawerHelper.removeNode(it)
-                                }
-                            }
-                            startPlacingJob = viewLifecycleOwner.lifecycleScope.launch {
-                                pathState.startEntry?.let { start ->
-                                    treeNodesToModels[start] = drawerHelper.drawNode(
-                                        start,
-                                        binding.sceneView,
-                                    )
-                                }
+                        endPlacingJob = viewLifecycleOwner.lifecycleScope.launch {
+                            pathState.endEntry?.let { end ->
+                                treeNodesToModels[end] = drawerHelper.drawNode(
+                                    end,
+                                    binding.sceneView,
+                                )
                             }
                         }
-           //         }
+                    }
+                    if (currentPathState?.startEntry != pathState.startEntry) {
+                        startPlacingJob?.cancel()
+                        currentPathState?.startEntry?.let { start ->
+                            treeNodesToModels[start]?.let {
+                                drawerHelper.removeNode(it)
+                            }
+                        }
+                        startPlacingJob = viewLifecycleOwner.lifecycleScope.launch {
+                            pathState.startEntry?.let { start ->
+                                treeNodesToModels[start] = drawerHelper.drawNode(
+                                    start,
+                                    binding.sceneView,
+                                )
+                            }
+                        }
+                    }
                     currentPathState = pathState
                 }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainModel.mainUiEvents.collectLatest { uiEvent ->
                     when (uiEvent) {
-                        is MainUiEvent.InitSuccess -> {
-                           // onInitializeSuccess()
-                        }
                         is MainUiEvent.InitFailed -> {
                             showSnackbar(getString(R.string.init_failed))
                         }
+
                         is MainUiEvent.NodeCreated -> {
                             showSnackbar(getString(R.string.node_created))
                         }
+
                         is MainUiEvent.LinkCreated -> {
                             viewLifecycleOwner.lifecycleScope.launch {
                                 treeAdapter.createLink(uiEvent.node1, uiEvent.node2)
                                 showSnackbar(getString(R.string.link_created))
                             }
                         }
+
                         is MainUiEvent.NodeDeleted -> {
                             showSnackbar(getString(R.string.node_deleted))
                         }
+
                         is MainUiEvent.PathNotFound -> {
                             showSnackbar(getString(R.string.no_path))
                         }
+
                         is MainUiEvent.EntryAlreadyExists -> {
                             showSnackbar(getString(R.string.entry_already_exists))
                         }
+
                         else -> {}
                     }
                 }
@@ -230,7 +210,7 @@ class PreviewFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainModel.confirmationObject.collectLatest { confObject ->
                     confObjectJob?.cancel()
                     confObjectJob = viewLifecycleOwner.lifecycleScope.launch {
@@ -239,17 +219,15 @@ class PreviewFragment : Fragment() {
                         }
                         confObject?.let {
                             it.node = drawerHelper.placeLabel(
-                                confObject.label,
-                                confObject.pos,
-                                binding.sceneView
+                                confObject.label, confObject.pos, binding.sceneView
                             )
                             lastConfObject = it
                         }
                     }
                 }
-                }
             }
         }
+    }
 
 
     private fun onDrawFrame(frame: ArFrame) {
@@ -271,7 +249,7 @@ class PreviewFragment : Fragment() {
             frame.camera.displayOrientedPose.tz()
         )
 
-        if (System.currentTimeMillis() - lastPositionTime > POSITION_DETECT_DELAY){
+        if (System.currentTimeMillis() - lastPositionTime > POSITION_DETECT_DELAY) {
             lastPositionTime = System.currentTimeMillis()
             changeViewablePath(userPos)
             if (App.mode == App.ADMIN_MODE) {
@@ -282,50 +260,48 @@ class PreviewFragment : Fragment() {
             }
         }
     }
-    
-    private fun selectNode(node: ArNode?){
-        //User selected entry can be stored in PreviewFragment nodes map,
+
+    private fun selectNode(node: ArNode?) {
+        // User selected entry can be stored in PreviewFragment nodes map,
         // if this node displayed as PathState start or end
         val treeNode = treeNodesToModels.inverse[node] ?: treeAdapter.getTreeNode(node)
         mainModel.onEvent(MainEvent.NewSelectedNode(treeNode))
     }
 
-    private fun checkSelectedNode(treeNode: TreeNode){
+    private fun checkSelectedNode(treeNode: TreeNode) {
         if (treeAdapter.getArNode(treeNode) == null) {
             mainModel.onEvent(MainEvent.NewSelectedNode(null))
         }
     }
 
-    private fun linkNodes(node1: ArNode, node2: ArNode){
+    private fun linkNodes(node1: ArNode, node2: ArNode) {
         viewLifecycleOwner.lifecycleScope.launch {
             val path1: TreeNode? = treeAdapter.getTreeNode(node1)
             val path2: TreeNode? = treeAdapter.getTreeNode(node2)
 
-            if (path1 != null && path2 != null){
+            if (path1 != null && path2 != null) {
                 mainModel.onEvent(MainEvent.LinkNodes(path1, path2))
             }
         }
     }
 
-    private fun changeViewablePath(userPosition: Float3){
+    private fun changeViewablePath(userPosition: Float3) {
         wayBuildingJob?.cancel()
         wayBuildingJob = viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
             val nodes = currentPathState?.path?.getNearNodes(
-                number = VIEWABLE_PATH_NODES,
-                position = userPosition
+                number = VIEWABLE_PATH_NODES, position = userPosition
             )
             pathAdapter.commit(nodes ?: listOf())
         }
     }
 
     //ONLY FOR ADMIN MODE
-    private fun changeViewableTree(userPosition: Float3){
+    private fun changeViewableTree(userPosition: Float3) {
         if (treeBuildingJob?.isCompleted == true || treeBuildingJob?.isCancelled == true || treeBuildingJob == null) {
             treeBuildingJob?.cancel()
             treeBuildingJob = viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
                 val nodes = mainModel.treeDiffUtils.getNearNodes(
-                    radius = VIEWABLE_ADMIN_NODES,
-                    position = userPosition
+                    radius = VIEWABLE_ADMIN_NODES, position = userPosition
                 )
                 treeAdapter.commit(nodes)
             }
@@ -333,43 +309,21 @@ class PreviewFragment : Fragment() {
 
     }
 
-//    private fun reDrawPath(path: Path?, wayNodes: MutableList<ArNode>){
-//        wayBuildingJob?.cancel()
-//        wayBuildingJob = viewLifecycleOwner.lifecycleScope.launch {
-//            drawerHelper.drawWay(
-//                path,
-//                wayNodes,
-//                binding.sceneView
-//            )
-//        }
-//    }
-
-
-
-//    private suspend fun onInitializeSuccess() {
-//        if (App.mode == App.ADMIN_MODE) {
-//            drawerHelper.drawTree(
-//                mainModel.tree,
-//                treeNodesToModels,
-//                modelsToLinkModels,
-//                binding.sceneView
-//            )
-//        }
-//    }
-
     private fun showSnackbar(message: String) {
-        Snackbar.make(binding.sceneView, message, Snackbar.LENGTH_SHORT)
-            .show()
+        Snackbar.make(binding.sceneView, message, Snackbar.LENGTH_SHORT).show()
     }
 
     companion object {
-        //how many path nodes will be displayed at the moment
+        //How many path nodes will be displayed at the moment
         const val VIEWABLE_PATH_NODES = 32
-        //distance of viewable nodes for admin mode
+
+        //Distance of viewable nodes for admin mode
         const val VIEWABLE_ADMIN_NODES = 8f
-        //how often the check for path and tree redraw will be
+
+        //How often the check for path and tree redraw will be in millisecond
         const val POSITION_DETECT_DELAY = 100L
-        //image crop percentage for recognition
+
+        //Image crop percentage for recognition
         val DESIRED_CROP = Pair(0, 0)
     }
 }

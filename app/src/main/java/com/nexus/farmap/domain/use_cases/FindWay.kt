@@ -9,9 +9,7 @@ class FindWay(
 ) {
 
     suspend operator fun invoke(
-        from: String,
-        to: String,
-        tree: Tree
+        from: String, to: String, tree: Tree
     ): Path? {
         return pathfinder.findWay(from, to, tree)
     }

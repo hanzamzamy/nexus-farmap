@@ -4,9 +4,8 @@ import com.nexus.farmap.domain.tree.TreeNode
 import kotlin.math.abs
 
 class AStarNode(
-    val node: TreeNode,
-    finalNode: AStarNode?
-){
+    val node: TreeNode, finalNode: AStarNode?
+) {
     var g = 0f
         private set
     var f = 0f
@@ -23,9 +22,9 @@ class AStarNode(
     }
 
     fun calculateHeuristic(finalNode: AStarNode) {
-        h =     abs(finalNode.node.position.x - node.position.x) +
-                abs(finalNode.node.position.y - node.position.y) +
-                abs(finalNode.node.position.z - node.position.z)
+        h = abs(finalNode.node.position.x - node.position.x) + abs(finalNode.node.position.y - node.position.y) + abs(
+            finalNode.node.position.z - node.position.z
+        )
     }
 
     fun setNodeData(currentNode: AStarNode, cost: Float) {

@@ -12,12 +12,9 @@ class PathAdapter(
     previewView: ArSceneView,
     bufferSize: Int,
     scope: LifecycleCoroutineScope,
-): NodesAdapter<OrientatedPosition>(drawerHelper, previewView, bufferSize, scope)
-{
+) : NodesAdapter<OrientatedPosition>(drawerHelper, previewView, bufferSize, scope) {
 
-    override suspend fun onInserted(item: OrientatedPosition): ArNode =
-        drawerHelper.placeArrow(item, previewView)
+    override suspend fun onInserted(item: OrientatedPosition): ArNode = drawerHelper.placeArrow(item, previewView)
 
-    override suspend fun onRemoved(item: OrientatedPosition, node: ArNode) =
-        drawerHelper.removeArrowWithAnim(node)
+    override suspend fun onRemoved(item: OrientatedPosition, node: ArNode) = drawerHelper.removeArrowWithAnim(node)
 }

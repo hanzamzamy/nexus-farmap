@@ -10,17 +10,12 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.withContext
 
 abstract class NodesAdapter<T>(
-    val drawerHelper: DrawerHelper,
-    val previewView: ArSceneView,
-    bufferSize: Int,
-    scope: LifecycleCoroutineScope
+    val drawerHelper: DrawerHelper, val previewView: ArSceneView, bufferSize: Int, scope: LifecycleCoroutineScope
 ) {
 
     protected val nodes = mutableMapOf<T, ArNode>()
     private val changesFlow = MutableSharedFlow<DiffOperation<T>>(
-        replay = 0,
-        extraBufferCapacity = bufferSize,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
+        replay = 0, extraBufferCapacity = bufferSize, onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
     init {
@@ -33,8 +28,9 @@ abstract class NodesAdapter<T>(
                             onRemoved(change.item, it)
                         }
                     }
+
                     is DiffOperation.Added -> {
-                        if (nodes[change.item] == null){
+                        if (nodes[change.item] == null) {
                             nodes[change.item] = onInserted(change.item)
                         }
                     }
@@ -48,14 +44,10 @@ abstract class NodesAdapter<T>(
     }
 
     private suspend fun calculateChanges(newList: List<T>) = withContext(Dispatchers.Default) {
-        nodes.keys.asSequence()
-            .minus(newList)
-            .map { item -> DiffOperation.Deleted(item) }
-            .forEach { change ->
-                changesFlow.tryEmit(change)}
-        newList.asSequence()
-            .minus(nodes.keys)
-            .map { item -> DiffOperation.Added(item) }
+        nodes.keys.asSequence().minus(newList).map { item -> DiffOperation.Deleted(item) }.forEach { change ->
+                changesFlow.tryEmit(change)
+            }
+        newList.asSequence().minus(nodes.keys).map { item -> DiffOperation.Added(item) }
             .forEach { change -> changesFlow.tryEmit(change) }
     }
 
@@ -63,8 +55,8 @@ abstract class NodesAdapter<T>(
     abstract suspend fun onRemoved(item: T, node: ArNode)
 
     sealed class DiffOperation<out T> {
-        class Added<out T>(val item: T): DiffOperation<T>()
-        class Deleted<out T>(val item: T): DiffOperation<T>()
+        class Added<out T>(val item: T) : DiffOperation<T>()
+        class Deleted<out T>(val item: T) : DiffOperation<T>()
     }
 
 }

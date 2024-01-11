@@ -4,9 +4,7 @@ import dev.romainguy.kotlin.math.Float3
 import dev.romainguy.kotlin.math.Quaternion
 
 sealed class TreeNode(
-    val id: Int,
-    var position: Float3,
-    var neighbours: MutableList<Int> = mutableListOf()
+    val id: Int, var position: Float3, var neighbours: MutableList<Int> = mutableListOf()
 ) {
     class Entry(
         var number: String,
@@ -14,7 +12,7 @@ sealed class TreeNode(
         id: Int,
         position: Float3,
         neighbours: MutableList<Int> = mutableListOf(),
-    ): TreeNode(id, position, neighbours){
+    ) : TreeNode(id, position, neighbours) {
 
         fun copy(
             number: String = this.number,
@@ -34,20 +32,14 @@ sealed class TreeNode(
     }
 
     class Path(
-        id: Int,
-        position: Float3,
-        neighbours: MutableList<Int> = mutableListOf()
-    ): TreeNode(id, position, neighbours) {
+        id: Int, position: Float3, neighbours: MutableList<Int> = mutableListOf()
+    ) : TreeNode(id, position, neighbours) {
 
         fun copy(
-            id: Int = this.id,
-            position: Float3 = this.position,
-            neighbours: MutableList<Int> = this.neighbours
+            id: Int = this.id, position: Float3 = this.position, neighbours: MutableList<Int> = this.neighbours
         ): Path {
             return Path(
-                id,
-                position,
-                neighbours
+                id, position, neighbours
             )
         }
     }

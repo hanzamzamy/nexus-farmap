@@ -18,25 +18,19 @@ class MainActivity : AppCompatActivity() {
         val arCoreSessionHelper = ARCoreSessionLifecycleHelper(this)
 
         arCoreSessionHelper.beforeSessionResume = { session ->
-            session.configure(
-                session.config.apply {
-                    // To get the best image of the object in question, enable autofocus.
-                    focusMode = Config.FocusMode.AUTO
-                    if (session.isDepthModeSupported(Config.DepthMode.AUTOMATIC)) {
-                        depthMode = Config.DepthMode.AUTOMATIC
-                    }
+            session.configure(session.config.apply {
+                // To get the best image of the object in question, enable autofocus.
+                focusMode = Config.FocusMode.AUTO
+                if (session.isDepthModeSupported(Config.DepthMode.AUTOMATIC)) {
+                    depthMode = Config.DepthMode.AUTOMATIC
                 }
-            )
+            })
 
-            val filter = CameraConfigFilter(session)
-                .setFacingDirection(CameraConfig.FacingDirection.BACK)
+            val filter = CameraConfigFilter(session).setFacingDirection(CameraConfig.FacingDirection.BACK)
             val configs = session.getSupportedCameraConfigs(filter)
-            val sort = compareByDescending<CameraConfig> { it.imageSize.width }
-                .thenByDescending { it.imageSize.height }
+            val sort = compareByDescending<CameraConfig> { it.imageSize.width }.thenByDescending { it.imageSize.height }
             session.cameraConfig = configs.sortedWith(sort)[0]
         }
-
-        //lifecycle.addObserver(arCoreSessionHelper)
 
     }
 

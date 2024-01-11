@@ -9,16 +9,10 @@ class AnalyzeImage(
 ) {
 
     suspend operator fun invoke(
-        image: Image,
-        imageRotation: Int,
-        imageCropPercentage: Pair<Int, Int>,
-        displaySize: Pair<Int, Int>
-    ): Result<DetectedObjectResult>{
+        image: Image, imageRotation: Int, imageCropPercentage: Pair<Int, Int>, displaySize: Pair<Int, Int>
+    ): Result<DetectedObjectResult> {
         return objectDetector.analyze(
-            image,
-            imageRotation,
-            imageCropPercentage,
-            displaySize
+            image, imageRotation, imageCropPercentage, displaySize
         )
     }
 }

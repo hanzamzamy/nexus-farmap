@@ -23,9 +23,7 @@ class TreeNodeDto(
         val TYPE_ENTRY = "entry"
 
         fun fromTreeNode(
-            node: TreeNode,
-            position: Float3? = null,
-            forwardVector: Quaternion? = null
+            node: TreeNode, position: Float3? = null, forwardVector: Quaternion? = null
         ): TreeNodeDto {
             return TreeNodeDto(
                 id = node.id,

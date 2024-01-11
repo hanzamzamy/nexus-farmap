@@ -32,19 +32,17 @@ class ConfirmFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val callback: OnBackPressedCallback =
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    mainModel.onEvent(MainEvent.RejectConfObject(confType))
-                    findNavController().popBackStack()
-                }
+        val callback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                mainModel.onEvent(MainEvent.RejectConfObject(confType))
+                findNavController().popBackStack()
             }
+        }
         requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentConfirmBinding.inflate(inflater, container, false)
         return binding.root
@@ -68,27 +66,28 @@ class ConfirmFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainModel.mainUiEvents.collect { uiEvent ->
-                        when (uiEvent) {
-                            is MainUiEvent.InitSuccess -> {
-                                val action =
-                                    ConfirmFragmentDirections.actionConfirmFragmentToRouterFragment()
-                                findNavController().navigate(action)
-                            }
-                            is MainUiEvent.InitFailed -> {
-                                findNavController().popBackStack()
-                            }
-                            is MainUiEvent.EntryCreated -> {
-                                val action =
-                                    ConfirmFragmentDirections.actionConfirmFragmentToRouterFragment()
-                                findNavController().navigate(action)
-                            }
-                            is MainUiEvent.EntryAlreadyExists -> {
-                                val action =
-                                    ConfirmFragmentDirections.actionConfirmFragmentToRouterFragment()
-                                findNavController().navigate(action)
-                            }
-                            else -> {}
+                    when (uiEvent) {
+                        is MainUiEvent.InitSuccess -> {
+                            val action = ConfirmFragmentDirections.actionConfirmFragmentToRouterFragment()
+                            findNavController().navigate(action)
                         }
+
+                        is MainUiEvent.InitFailed -> {
+                            findNavController().popBackStack()
+                        }
+
+                        is MainUiEvent.EntryCreated -> {
+                            val action = ConfirmFragmentDirections.actionConfirmFragmentToRouterFragment()
+                            findNavController().navigate(action)
+                        }
+
+                        is MainUiEvent.EntryAlreadyExists -> {
+                            val action = ConfirmFragmentDirections.actionConfirmFragmentToRouterFragment()
+                            findNavController().navigate(action)
+                        }
+
+                        else -> {}
+                    }
                 }
             }
         }

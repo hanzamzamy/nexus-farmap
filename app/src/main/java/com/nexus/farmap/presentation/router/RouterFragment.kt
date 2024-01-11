@@ -37,8 +37,7 @@ class RouterFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentRouterBinding.inflate(inflater, container, false)
         return binding.root
@@ -48,8 +47,7 @@ class RouterFragment : Fragment() {
 
         if (App.mode == App.ADMIN_MODE) {
             binding.adminPanel.isVisible = true
-        }
-        else {
+        } else {
             binding.adminPanel.isGone = true
         }
 
@@ -70,8 +68,7 @@ class RouterFragment : Fragment() {
         binding.entryButton.setOnClickListener {
             val bundle = Bundle()
             bundle.putInt(
-                ScannerFragment.SCAN_TYPE,
-                ScannerFragment.TYPE_ENTRY
+                ScannerFragment.SCAN_TYPE, ScannerFragment.TYPE_ENTRY
             )
             findNavController().navigate(R.id.action_global_scannerFragment, args = bundle)
         }
@@ -97,15 +94,12 @@ class RouterFragment : Fragment() {
                 mainModel.pathState.collect { pathState ->
                     binding.fromInput.setText(pathState.startEntry?.number ?: "")
                     binding.toInput.setText(pathState.endEntry?.number ?: "")
-                    if (pathState.path != null){
+                    if (pathState.path != null) {
                         binding.destinationText.isVisible = true
-                        binding.destinationText.text =
-                            resources.getString(
-                                R.string.going,
-                                destinationDesc(pathState.endEntry!!.number, requireContext())
-                            )
-                    }
-                    else {
+                        binding.destinationText.text = resources.getString(
+                            R.string.going, destinationDesc(pathState.endEntry!!.number, requireContext())
+                        )
+                    } else {
                         binding.destinationText.isGone = true
                     }
 
@@ -116,12 +110,6 @@ class RouterFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainModel.selectedNode.collect { treeNode ->
-                    if (treeNode == null) {
-
-                    }
-                    else {
-
-                    }
                     binding.linkButton.isEnabled = treeNode != null
                     binding.deleteButton.isEnabled = treeNode != null
                 }
@@ -138,19 +126,18 @@ class RouterFragment : Fragment() {
         }
     }
 
-    private fun search(type: Int){
-        val action =
-            RouterFragmentDirections.actionRouterFragmentToSearchFragment(
-                type
-            )
+    private fun search(type: Int) {
+        val action = RouterFragmentDirections.actionRouterFragmentToSearchFragment(
+            type
+        )
         findNavController().navigate(action)
     }
 
-    private fun changeLinkPlacementMode(){
+    private fun changeLinkPlacementMode() {
         mainModel.onEvent(MainEvent.ChangeLinkMode)
     }
 
-    private fun removeSelectedNode(){
+    private fun removeSelectedNode() {
         mainModel.selectedNode.value?.let {
             mainModel.onEvent(MainEvent.DeleteNode(it))
         }
@@ -167,11 +154,9 @@ class RouterFragment : Fragment() {
                 if (result != null) {
                     mainModel.onEvent(
                         MainEvent.CreateNode(
-                        number,
-                        position,
-                        orientation,
-                        result
-                    ))
+                            number, position, orientation, result
+                        )
+                    )
                 }
             }
         }

@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainShareModel: ViewModel() {
+class MainShareModel : ViewModel() {
 
     private val findWay = App.instance!!.findWay
 
@@ -58,42 +58,42 @@ class MainShareModel: ViewModel() {
     }
 
     fun onEvent(event: MainEvent) {
-        when (event){
+        when (event) {
             is MainEvent.NewFrame -> {
                 viewModelScope.launch {
                     _frame.emit(event.frame)
                 }
             }
+
             is MainEvent.NewConfirmationObject -> {
                 _confirmationObject.update { event.confObject }
             }
+
             is MainEvent.TrySearch -> {
                 viewModelScope.launch {
                     processSearch(event.number, event.changeType)
                 }
             }
+
             is MainEvent.AcceptConfObject -> {
                 when (event.confirmType) {
                     ConfirmFragment.CONFIRM_INITIALIZE -> {
                         viewModelScope.launch {
                             _confirmationObject.value?.let {
                                 initialize(
-                                    it.label,
-                                    it.pos.position,
-                                    it.pos.orientation
+                                    it.label, it.pos.position, it.pos.orientation
                                 )
                                 _confirmationObject.update { null }
 
                             }
                         }
                     }
+
                     ConfirmFragment.CONFIRM_ENTRY -> {
                         viewModelScope.launch {
                             _confirmationObject.value?.let {
                                 createNode(
-                                    number = it.label,
-                                    position = it.pos.position,
-                                    orientation = it.pos.orientation
+                                    number = it.label, position = it.pos.position, orientation = it.pos.orientation
                                 )
                                 _confirmationObject.update { null }
 
@@ -102,21 +102,25 @@ class MainShareModel: ViewModel() {
                     }
                 }
             }
+
             is MainEvent.RejectConfObject -> {
                 viewModelScope.launch {
                     _confirmationObject.update { null }
                 }
             }
+
             is MainEvent.NewSelectedNode -> {
                 viewModelScope.launch {
                     _selectedNode.update { event.node }
                 }
             }
+
             is MainEvent.ChangeLinkMode -> {
                 viewModelScope.launch {
                     _linkPlacementMode.update { !linkPlacementMode.value }
                 }
             }
+
             is MainEvent.CreateNode -> {
                 viewModelScope.launch {
                     createNode(
@@ -127,11 +131,13 @@ class MainShareModel: ViewModel() {
                     )
                 }
             }
+
             is MainEvent.LinkNodes -> {
                 viewModelScope.launch {
                     linkNodes(event.node1, event.node2)
                 }
             }
+
             is MainEvent.DeleteNode -> {
                 viewModelScope.launch {
                     removeNode(event.node)
@@ -151,42 +157,41 @@ class MainShareModel: ViewModel() {
                 val endEntry = pathState.value.endEntry
                 _pathState.update {
                     PathState(
-                        startEntry = entry,
-                        endEntry = if (entry.number == endEntry?.number) null else endEntry
-                 )
+                        startEntry = entry, endEntry = if (entry.number == endEntry?.number) null else endEntry
+                    )
                 }
             } else {
                 val startEntry = pathState.value.startEntry
-            _pathState.update {
-                PathState(
-                    startEntry = if (entry.number == startEntry?.number) null else startEntry,
-                    endEntry = entry
-                )
+                _pathState.update {
+                    PathState(
+                        startEntry = if (entry.number == startEntry?.number) null else startEntry, endEntry = entry
+                    )
+                }
             }
+            //Search successes
+            pathfindJob?.cancel()
+            pathfindJob = viewModelScope.launch {
+                pathfind()
+            }
+            _searchUiEvents.emit(SearchUiEvent.SearchSuccess)
         }
-        //Search successes
-        pathfindJob?.cancel()
-        pathfindJob = viewModelScope.launch {
-            pathfind()
-        }
-        _searchUiEvents.emit(SearchUiEvent.SearchSuccess)
-    }
     }
 
-    private suspend fun pathfind(){
+    private suspend fun pathfind() {
         val from = pathState.value.startEntry?.number ?: return
         val to = pathState.value.endEntry?.number ?: return
         if (tree.getEntry(from) != null && tree.getEntry(to) != null) {
             val path = findWay(from, to, tree)
             if (path != null) {
-                _pathState.update { it.copy(
-                    path = path
-                ) }
+                _pathState.update {
+                    it.copy(
+                        path = path
+                    )
+                }
             } else {
                 _mainUiEvents.emit(MainUiEvent.PathNotFound)
             }
-        }
-        else {
+        } else {
             throw Exception("Unknown tree nodes")
         }
     }
@@ -197,59 +202,47 @@ class MainShareModel: ViewModel() {
         orientation: Quaternion? = null,
         hitTestResult: HitTestResult? = null,
     ) {
-        if (position == null && hitTestResult == null){
+        if (position == null && hitTestResult == null) {
             throw Exception("No position was provided")
         }
-     //   if (position == null) {
-        if (number != null && tree.hasEntry(number)){
+        if (number != null && tree.hasEntry(number)) {
             _mainUiEvents.emit(MainUiEvent.EntryAlreadyExists)
             return
         }
         val treeNode = tree.addNode(
-            position ?: hitTestResult!!.orientatedPosition.position,
-            number,
-            orientation
+            position ?: hitTestResult!!.orientatedPosition.position, number, orientation
         )
 
         treeNode.let {
-            if (number != null){
+            if (number != null) {
                 _mainUiEvents.emit(MainUiEvent.EntryCreated)
             }
             _mainUiEvents.emit(
                 MainUiEvent.NodeCreated(
-                    treeNode,
-                    hitTestResult?.hitResult?.createAnchor()
+                    treeNode, hitTestResult?.hitResult?.createAnchor()
                 )
             )
         }
-//        } else {
-//            val treeNode = tree.addNode(
-//                position,
-//                number,
-//                orientation
-//            )
-//            treeNode.let {
-//                _mainUiEvents.emit(MainUiEvent.NodeCreated(
-//                    treeNode,
-//                    hitTestResult.hitResult.createAnchor()
-//                ))
-//            }
-//        }
     }
 
-    private suspend fun linkNodes(node1: TreeNode, node2: TreeNode){
+    private suspend fun linkNodes(node1: TreeNode, node2: TreeNode) {
         if (tree.addLink(node1, node2)) {
             _linkPlacementMode.update { false }
             _mainUiEvents.emit(MainUiEvent.LinkCreated(node1, node2))
         }
     }
 
-    private suspend fun removeNode(node: TreeNode){
+    private suspend fun removeNode(node: TreeNode) {
         tree.removeNode(node)
         _mainUiEvents.emit(MainUiEvent.NodeDeleted(node))
-        if (node == selectedNode.value) {_selectedNode.update { null }}
-        if (node == pathState.value.endEntry) {_pathState.update { it.copy(endEntry = null, path = null) }}
-        else if (node == pathState.value.startEntry) {_pathState.update { it.copy(startEntry = null, path = null) }}
+        if (node == selectedNode.value) {
+            _selectedNode.update { null }
+        }
+        if (node == pathState.value.endEntry) {
+            _pathState.update { it.copy(endEntry = null, path = null) }
+        } else if (node == pathState.value.startEntry) {
+            _pathState.update { it.copy(startEntry = null, path = null) }
+        }
     }
 
     private suspend fun initialize(entryNumber: String, position: Float3, newOrientation: Quaternion): Boolean {
@@ -257,24 +250,25 @@ class MainShareModel: ViewModel() {
         withContext(Dispatchers.IO) {
             result = tree.initialize(entryNumber, position, newOrientation)
         }
-        if (result.isFailure){
+        if (result.isFailure) {
             _mainUiEvents.emit(MainUiEvent.InitFailed)
             return false
         }
         _mainUiEvents.emit(MainUiEvent.InitSuccess)
         val entry = tree.getEntry(entryNumber)
-        if (entry != null){
-            _pathState.update { PathState(
-                startEntry = entry
-            ) }
-        }
-        else {
+        if (entry != null) {
+            _pathState.update {
+                PathState(
+                    startEntry = entry
+                )
+            }
+        } else {
             _pathState.update { PathState() }
         }
         return true
     }
 
-    private fun preload(){
+    private fun preload() {
         viewModelScope.launch {
             tree.preload()
         }

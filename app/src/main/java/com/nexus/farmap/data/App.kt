@@ -34,8 +34,7 @@ class App : Application() {
 
         database = Room.databaseBuilder(this, GraphDatabase::class.java, DATABASE_NAME)
             //.createFromAsset(DATABASE_DIR)
-            .allowMainThreadQueries()
-            .build()
+            .allowMainThreadQueries().build()
 
         repository = GraphImpl()
         tree = Tree(repository)

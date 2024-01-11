@@ -18,6 +18,7 @@ class Tree(
     private val _entryPoints: MutableMap<String, TreeNode.Entry> = mutableMapOf()
     private val _allPoints: MutableMap<Int, TreeNode> = mutableMapOf()
     private val _links: MutableMap<Int, MutableList<Int>> = mutableMapOf()
+
     //Nodes without links. Needed for near nodes calculation in TreeDiffUtils
     private val _freeNodes: MutableList<Int> = mutableListOf()
     private val _regions: MutableMap<Int, Int> = mutableMapOf()
@@ -44,16 +45,14 @@ class Tree(
     val diffUtils: TreeDiffUtils by lazy { TreeDiffUtils(this) }
 
     suspend fun preload() = withContext(Dispatchers.IO) {
-        if (initialized){
+        if (initialized) {
             throw Exception("Already initialized, cant preload")
         }
         preloaded = false
         val rawNodesList = repository.getNodes()
         for (nodeDto in rawNodesList) {
             var node: TreeNode
-            if (nodeDto.type == TreeNodeDto.TYPE_ENTRY
-                && nodeDto.number != null
-                && nodeDto.forwardVector != null){
+            if (nodeDto.type == TreeNodeDto.TYPE_ENTRY && nodeDto.number != null && nodeDto.forwardVector != null) {
                 node = TreeNode.Entry(
                     number = nodeDto.number,
                     forwardVector = nodeDto.forwardVector,
@@ -62,12 +61,9 @@ class Tree(
                     neighbours = nodeDto.neighbours
                 )
                 _entryPoints[node.number] = node
-            }
-            else {
+            } else {
                 node = TreeNode.Path(
-                    id = nodeDto.id,
-                    position = Float3(nodeDto.x, nodeDto.y, nodeDto.z),
-                    neighbours = nodeDto.neighbours
+                    id = nodeDto.id, position = Float3(nodeDto.x, nodeDto.y, nodeDto.z), neighbours = nodeDto.neighbours
                 )
             }
             _allPoints[node.id] = node
@@ -75,8 +71,8 @@ class Tree(
             if (node.neighbours.isEmpty()) {
                 _freeNodes.add(node.id)
             }
-            if (node.id+1 > availableId){
-                availableId = node.id+1
+            if (node.id + 1 > availableId) {
+                availableId = node.id + 1
             }
         }
         _allPoints.keys.forEach { id -> setRegion(id) }
@@ -89,12 +85,10 @@ class Tree(
             clearTree()
             initialized = true
             return Result.success(null)
-        }
-        else {
-            val entry = _entryPoints[entryNumber]
-                ?: return Result.failure(
-                    exception = WrongEntryException(_entryPoints.keys)
-                )
+        } else {
+            val entry = _entryPoints[entryNumber] ?: return Result.failure(
+                exception = WrongEntryException(_entryPoints.keys)
+            )
 
             pivotPosition = entry.position
             translocation = entry.position - position
@@ -114,8 +108,9 @@ class Tree(
         }
         val reg = region ?: getRegionNumber()
         _regions[nodeId] = reg
-        //Not using getNode(), because translocation is not needed
-        _allPoints[nodeId]?.neighbours?.forEach { id -> setRegion(id, reg)}
+
+        //Not using getNode() because translocation is not needed
+        _allPoints[nodeId]?.neighbours?.forEach { id -> setRegion(id, reg) }
     }
 
     private fun getRegionNumber(): Int {
@@ -123,11 +118,11 @@ class Tree(
     }
 
     fun getNode(id: Int): TreeNode? {
-        if (!initialized){
+        if (!initialized) {
             throw Exception("Tree isnt initialized")
         }
         val node = _allPoints[id]
-        return if (_translocatedPoints.containsKey(node)){
+        return if (_translocatedPoints.containsKey(node)) {
             node
         } else {
             if (node == null) {
@@ -140,7 +135,7 @@ class Tree(
     }
 
     fun getEntry(number: String): TreeNode.Entry? {
-        if (!initialized){
+        if (!initialized) {
             throw Exception("Tree isnt initialized")
         }
         val entry = _entryPoints[number]
@@ -152,7 +147,7 @@ class Tree(
     }
 
     fun getNodes(nodes: List<Int>): List<TreeNode> {
-        if (!initialized){
+        if (!initialized) {
             throw Exception("Tree isnt initialized")
         }
         return nodes.mapNotNull {
@@ -161,14 +156,14 @@ class Tree(
     }
 
     fun getFreeNodes(): List<TreeNode> {
-        if (!initialized){
+        if (!initialized) {
             throw Exception("Tree isnt initialized")
         }
         return _freeNodes.mapNotNull { id -> getNode(id) }
     }
 
     fun getAllNodes(): List<TreeNode> {
-        if (!initialized){
+        if (!initialized) {
             throw Exception("Tree isnt initialized")
         }
         val nodes = mutableListOf<TreeNode>()
@@ -180,32 +175,15 @@ class Tree(
         return nodes
     }
 
-    fun getAllEntries(): List<TreeNode> {
-        if (!initialized){
-            throw Exception("Tree isnt initialized")
-        }
-        val nodes = mutableListOf<TreeNode>()
-        for (entry in _entryPoints.values) {
-            getNode(entry.id)?.let {
-                nodes.add(it)
-            }
-        }
-        return nodes
-    }
-
     fun getEntriesNumbers(): Set<String> {
         return _entryPoints.keys
     }
 
-//    fun getAllLinksKeys(): Set<Int> {
-//        return _links.keys
-//    }
-
     fun getNodesWithLinks(): List<TreeNode> {
-        if (!initialized){
+        if (!initialized) {
             throw Exception("Tree isnt initialized")
         }
-       return _links.keys.mapNotNull {
+        return _links.keys.mapNotNull {
             getNode(it)
         }
     }
@@ -216,9 +194,7 @@ class Tree(
     }
 
     fun getNodeFromEachRegion(): Map<Int, TreeNode> {
-        return _regions.entries
-            .distinctBy { it.value }
-            .filter { getNode(it.key) != null }
+        return _regions.entries.distinctBy { it.value }.filter { getNode(it.key) != null }
             .associate { it.value to getNode(it.key)!! }
     }
 
@@ -228,42 +204,35 @@ class Tree(
 
     private fun translocateNode(node: TreeNode) {
         node.position = convertPosition(node.position, translocation, rotation, pivotPosition)
-        if (node is TreeNode.Entry){
+        if (node is TreeNode.Entry) {
             node.forwardVector = node.forwardVector.convert(rotation)
         }
         _translocatedPoints[node] = true
     }
 
     suspend fun addNode(
-        position: Float3,
-        number: String? = null,
-        forwardVector: Quaternion? = null
+        position: Float3, number: String? = null, forwardVector: Quaternion? = null
     ): TreeNode {
-        if (!initialized){
+        if (!initialized) {
             throw Exception("Tree isnt initialized")
         }
         if (_allPoints.values.find { it.position == position } != null) {
             throw Exception("Position already taken")
         }
         val newNode: TreeNode
-        if (number == null){
+        if (number == null) {
             newNode = TreeNode.Path(
-                availableId,
-                position
+                availableId, position
             )
-        }
-        else {
+        } else {
             if (_entryPoints[number] != null) {
                 throw Exception("Entry point already exists")
             }
-            if (forwardVector == null){
+            if (forwardVector == null) {
                 throw Exception("Null forward vector")
             }
             newNode = TreeNode.Entry(
-                number,
-                forwardVector,
-                availableId,
-                position
+                number, forwardVector, availableId, position
             )
             _entryPoints[newNode.number] = newNode
         }
@@ -280,10 +249,10 @@ class Tree(
     suspend fun removeNode(
         node: TreeNode
     ) {
-        if (!initialized){
+        if (!initialized) {
             throw Exception("Tree isnt initialized")
         }
-      //  val nodesForUpdate = getNodes(node.neighbours.toMutableList())
+
         removeAllLinks(node)
         _translocatedPoints.remove(node)
         _allPoints.remove(node.id)
@@ -296,26 +265,22 @@ class Tree(
     }
 
     suspend fun addLink(
-        node1: TreeNode,
-        node2: TreeNode
+        node1: TreeNode, node2: TreeNode
     ): Boolean {
-        if (!initialized){
+        if (!initialized) {
             throw Exception("Tree isnt initialized")
         }
         if (_links[node1.id] == null) {
             _links[node1.id] = mutableListOf()
-        }
-        else {
+        } else {
             if (_links[node1.id]!!.contains(node2.id)) {
                 throw Exception("Link already exists")
             }
         }
         if (_links[node2.id] == null) {
             _links[node2.id] = mutableListOf()
-        }
-        else {
-            if (_links[node2.id]!!.contains(node1.id))
-                throw Exception("Link already exists")
+        } else {
+            if (_links[node2.id]!!.contains(node1.id)) throw Exception("Link already exists")
         }
         node1.neighbours.add(node2.id)
         node2.neighbours.add(node1.id)
@@ -330,26 +295,8 @@ class Tree(
 
     }
 
-//    suspend fun removeLink(
-//        node1: TreeNode,
-//        node2: TreeNode
-//    ) {
-//        //нет обновления в repository!!!!
-//        if (!initialized){
-//            throw Exception("Tree isnt initialized")
-//        }
-//        if (_links[node1.id] == null || _links[node2.id] == null)
-//            return
-//        if (_links[node1.id]!!.contains(node2.id) && _links[node2.id]!!.contains(node1.id)){
-//            node1.neighbours.remove(node2.id)
-//            node2.neighbours.remove(node1.id)
-//            _links[node1.id] = node1.neighbours
-//            _links[node2.id] = node2.neighbours
-//        }
-//    }
-
-    private suspend fun removeAllLinks(node: TreeNode){
-        if (!initialized){
+    private suspend fun removeAllLinks(node: TreeNode) {
+        if (!initialized) {
             throw Exception("Tree isnt initialized")
         }
         if (_links[node.id] == null) {
@@ -363,7 +310,7 @@ class Tree(
             _allPoints[id]?.let {
                 it.neighbours.remove(node.id)
                 _links[it.id] = it.neighbours
-                if (it.neighbours.isEmpty()){
+                if (it.neighbours.isEmpty()) {
                     _freeNodes.add(it.id)
                 }
             }
@@ -372,7 +319,7 @@ class Tree(
         _links[node.id] = node.neighbours
         _freeNodes.add(node.id)
 
-        //change regions
+        //Change regions.
         val blacklist = mutableListOf<Int>()
         for (i in 0 until nodesForUpdate.size) {
             val id = nodesForUpdate[i].id
@@ -383,7 +330,7 @@ class Tree(
         repository.updateNodes(nodesForUpdate, translocation, rotation, pivotPosition)
     }
 
-    private suspend fun clearTree(){
+    private suspend fun clearTree() {
         Log.d(TAG, "Tree cleared")
         _links.clear()
         _allPoints.clear()
@@ -399,14 +346,10 @@ class Tree(
     }
 
     private fun convertPosition(
-        position: Float3,
-        translocation: Float3,
-        quaternion: Quaternion,
-        pivotPosition: Float3
+        position: Float3, translocation: Float3, quaternion: Quaternion, pivotPosition: Float3
     ): Float3 {
         return (com.google.ar.sceneform.math.Quaternion.rotateVector(
-            quaternion.toOldQuaternion(),
-            (position - pivotPosition).toVector3()
+            quaternion.toOldQuaternion(), (position - pivotPosition).toVector3()
         ).toFloat3() + pivotPosition) - translocation
     }
 

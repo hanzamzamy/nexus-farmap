@@ -7,8 +7,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.nexus.farmap.R
 import com.nexus.farmap.domain.hit_test.OrientatedPosition
-import com.nexus.farmap.domain.pathfinding.Path
-import com.nexus.farmap.domain.tree.Tree
 import com.nexus.farmap.domain.tree.TreeNode
 import com.google.ar.core.Anchor
 import com.google.ar.sceneform.math.Quaternion
@@ -26,12 +24,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.future.await
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.yield
 
 
 class DrawerHelper(
     private val fragment: Fragment,
-    ) {
+) {
 
     private var labelScale = Scale(0.15f, 0.075f, 0.15f)
     private var arrowScale = Scale(0.5f, 0.5f, 0.5f)
@@ -43,14 +40,13 @@ class DrawerHelper(
     private val animationJobs = mutableMapOf<ArNode, Job>()
 
     suspend fun drawNode(
-        treeNode: TreeNode,
-        surfaceView: ArSceneView,
-        anchor: Anchor? = null
+        treeNode: TreeNode, surfaceView: ArSceneView, anchor: Anchor? = null
     ): ArNode {
-        return when (treeNode){
+        return when (treeNode) {
             is TreeNode.Path -> {
                 drawPath(treeNode, surfaceView, anchor)
             }
+
             is TreeNode.Entry -> {
                 drawEntry(treeNode, surfaceView, anchor)
             }
@@ -59,36 +55,14 @@ class DrawerHelper(
     }
 
     suspend fun removeLink(
-        pair: Pair<ArNode, ArNode>,
-        modelsToLinkModels: MutableBiMap<Pair<ArNode, ArNode>, ArNode>
+        pair: Pair<ArNode, ArNode>, modelsToLinkModels: MutableBiMap<Pair<ArNode, ArNode>, ArNode>
     ) {
         modelsToLinkModels[pair]?.destroy()
         modelsToLinkModels.remove(pair)
     }
 
-    suspend fun removeNode(
-        treeNode: TreeNode,
-        modelsToLinkModels: MutableBiMap<Pair<ArNode, ArNode>, ArNode>,
-        treeNodesToModels: MutableBiMap<TreeNode, ArNode>,
-    ){
-        treeNodesToModels[treeNode]?.let { node ->
-            modelsToLinkModels.keys
-                .filter { pair ->
-                    pair.first == node || pair.second == node
-                }
-                .forEach { pair ->
-                    removeLink(pair, modelsToLinkModels)
-                }
-            treeNodesToModels.remove(treeNode)
-            node.destroy()
-            node.anchor?.destroy()
-        }
-    }
-
     private suspend fun drawPath(
-        treeNode: TreeNode.Path,
-        surfaceView: ArSceneView,
-        anchor: Anchor? = null
+        treeNode: TreeNode.Path, surfaceView: ArSceneView, anchor: Anchor? = null
     ): ArNode {
         val modelNode = ArNode()
         modelNode.loadModel(
@@ -97,15 +71,12 @@ class DrawerHelper(
         )
         modelNode.position = treeNode.position
         modelNode.modelScale = Scale(0.1f)
-        if (anchor != null){
+        if (anchor != null) {
             modelNode.anchor = anchor
-        }
-        else {
+        } else {
             modelNode.anchor = modelNode.createAnchor()
         }
-//        anchor?.let {
-//            modelNode.anchor = it
-//        }
+
         modelNode.model?.let {
             it.isShadowCaster = false
             it.isShadowReceiver = false
@@ -117,103 +88,33 @@ class DrawerHelper(
     }
 
     private suspend fun drawEntry(
-        treeNode: TreeNode.Entry,
-        surfaceView: ArSceneView,
-        anchor: Anchor? = null
+        treeNode: TreeNode.Entry, surfaceView: ArSceneView, anchor: Anchor? = null
     ): ArNode {
         return placeLabel(
-            treeNode.number,
-            OrientatedPosition(treeNode.position, treeNode.forwardVector),
-            surfaceView
+            treeNode.number, OrientatedPosition(treeNode.position, treeNode.forwardVector), surfaceView
         )
     }
 
-    suspend fun drawTree(
-        tree: Tree,
-        treeNodesToModels: MutableBiMap<TreeNode, ArNode>,
-        modelsToLinkModels: MutableBiMap<Pair<ArNode, ArNode>, ArNode>,
-        surfaceView: ArSceneView
-    ){
-            for (node in tree.getAllNodes()){
-                treeNodesToModels[node]?.let { removeNode(it) }
-                treeNodesToModels[node] = drawNode(
-                    node,
-                    surfaceView
-                )
-
-                yield()
-            }
-            for (treeNode1 in tree.getNodesWithLinks()){
-                val node1 = treeNodesToModels[treeNode1]!!
-                val others = tree.getNodeLinks(treeNode1)!!
-                for (treeNode2 in others) {
-                    val node2 = treeNodesToModels[treeNode2]!!
-                    if (modelsToLinkModels[Pair(node1, node2)] == null ){
-                        drawLine(
-                            node1,
-                            node2,
-                            modelsToLinkModels,
-                            surfaceView
-                        )
-                    }
-                }
-                yield()
-            }
-    }
-
-    suspend fun drawWay(
-        way: Path?,
-        routeLabels: MutableList<ArNode>,
-        surfaceView: ArSceneView
-    ){
-
-        routeLabels.forEach { it.destroy() }
-        routeLabels.clear()
-
-        way?.let {
-            for (pos in way.nodes) {
-                routeLabels.add(placeArrow(pos, surfaceView))
-                yield()
-            }
-        }
-    }
-
     suspend fun placeLabel(
-        label: String,
-        pos: OrientatedPosition,
-        surfaceView: ArSceneView,
-        anchor: Anchor? = null
+        label: String, pos: OrientatedPosition, surfaceView: ArSceneView, anchor: Anchor? = null
     ): ArNode = placeRend(
-        label = label,
-        pos = pos,
-        surfaceView = surfaceView,
-        scale = labelScale,
-        anchor = anchor
+        label = label, pos = pos, surfaceView = surfaceView, scale = labelScale, anchor = anchor
     )
 
     suspend fun placeArrow(
-        pos: OrientatedPosition,
-        surfaceView: ArSceneView
+        pos: OrientatedPosition, surfaceView: ArSceneView
     ): ArNode = placeRend(
-        pos = pos,
-        surfaceView = surfaceView,
-        scale = arrowScale
+        pos = pos, surfaceView = surfaceView, scale = arrowScale
     )
 
     private suspend fun placeRend(
-        label: String? = null,
-        pos: OrientatedPosition,
-        surfaceView: ArSceneView,
-        scale: Scale,
-        anchor: Anchor? = null
+        label: String? = null, pos: OrientatedPosition, surfaceView: ArSceneView, scale: Scale, anchor: Anchor? = null
     ): ArNode {
         var node: ArNode? = null
         ViewRenderable.builder()
             .setView(fragment.requireContext(), if (label != null) R.layout.text_sign else R.layout.route_node)
-            .setSizer { Vector3(0f, 0f, 0f) }
-            .setVerticalAlignment(ViewRenderable.VerticalAlignment.CENTER)
-            .setHorizontalAlignment(ViewRenderable.HorizontalAlignment.CENTER)
-            .build()
+            .setSizer { Vector3(0f, 0f, 0f) }.setVerticalAlignment(ViewRenderable.VerticalAlignment.CENTER)
+            .setHorizontalAlignment(ViewRenderable.HorizontalAlignment.CENTER).build()
             .thenAccept { renderable: ViewRenderable ->
                 renderable.let {
                     it.isShadowCaster = false
@@ -231,10 +132,9 @@ class DrawerHelper(
                     model
                     position = Position(pos.position.x, pos.position.y, pos.position.z)
                     quaternion = pos.orientation
-                    if (anchor != null){
+                    if (anchor != null) {
                         this.anchor = anchor
-                    }
-                    else {
+                    } else {
                         this.anchor = this.createAnchor()
                     }
                 }
@@ -245,8 +145,7 @@ class DrawerHelper(
                     if (label != null) labelAnimationDelay else arrowAnimationDelay,
                     if (label != null) labelAnimationPart else arrowAnimationPart
                 )
-            }
-            .await()
+            }.await()
 
         return node!!
     }
@@ -262,17 +161,12 @@ class DrawerHelper(
         node.animateViewDisappear(arrowScale, arrowAnimationDelay, arrowAnimationPart)
     }
 
-    fun removeLabelWithAnim(node: ArNode) {
-        node.model as ViewRenderable? ?: throw Exception("No view renderable")
-        node.animateViewDisappear(arrowScale, labelAnimationDelay, labelAnimationPart)
-    }
-
     fun drawLine(
         from: ArNode,
         to: ArNode,
         modelsToLinkModels: MutableBiMap<Pair<ArNode, ArNode>, ArNode>,
         surfaceView: ArSceneView
-    ){
+    ) {
 
         val fromVector = from.position.toVector3()
         val toVector = to.position.toVector3()
@@ -284,12 +178,10 @@ class DrawerHelper(
         val colorOrange = Color(Color.parseColor("#ffffff"))
 
         // 1. make a material by the color
-        MaterialFactory.makeOpaqueWithColor(fragment.requireContext(), colorOrange)
-            .thenAccept { material: Material? ->
+        MaterialFactory.makeOpaqueWithColor(fragment.requireContext(), colorOrange).thenAccept { material: Material? ->
                 // 2. make a model by the material
                 val model = ShapeFactory.makeCylinder(
-                    0.01f, lineLength,
-                    Vector3(0f, lineLength / 2, 0f), material
+                    0.01f, lineLength, Vector3(0f, lineLength / 2, 0f), material
                 )
 
                 model.isShadowCaster = false
@@ -304,15 +196,12 @@ class DrawerHelper(
                 // 4. set rotation
                 val difference = Vector3.subtract(toVector, fromVector)
                 val directionFromTopToBottom = difference.normalized()
-                val rotationFromAToB: Quaternion =
-                    Quaternion.lookRotation(
-                        directionFromTopToBottom,
-                        Vector3.up()
-                    )
+                val rotationFromAToB: Quaternion = Quaternion.lookRotation(
+                    directionFromTopToBottom, Vector3.up()
+                )
 
                 val rotation = Quaternion.multiply(
-                    rotationFromAToB,
-                    Quaternion.axisAngle(Vector3(1.0f, 0.0f, 0.0f), 270f)
+                    rotationFromAToB, Quaternion.axisAngle(Vector3(1.0f, 0.0f, 0.0f), 270f)
                 )
 
                 node.modelQuaternion = rotation.toNewQuaternion()
@@ -332,26 +221,25 @@ class DrawerHelper(
         }
     }
 
-    private fun ArNode.animateView(appear: Boolean, targetScale: Scale, delay: Long, part: Int, end: ((ArNode) -> Unit)?) {
+    private fun ArNode.animateView(
+        appear: Boolean, targetScale: Scale, delay: Long, part: Int, end: ((ArNode) -> Unit)?
+    ) {
         val renderable = this.model as ViewRenderable? ?: throw Exception("No view renderable")
         var size = renderable.sizer.getSize(renderable.view)
-        val xPart = targetScale.x/part
-        val yPart = targetScale.y/part
-        val zPart = targetScale.z/part
+        val xPart = targetScale.x / part
+        val yPart = targetScale.y / part
+        val zPart = targetScale.z / part
         animationJobs[this]?.cancel()
         animationJobs[this] = fragment.viewLifecycleOwner.lifecycleScope.launch {
             while (true) {
                 if (size.x >= targetScale.toVector3().x && appear) {
                     break
-                }
-                else if(size.x <= 0 && !appear){
+                } else if (size.x <= 0 && !appear) {
                     break
                 }
                 renderable.sizer = ViewSizer {
-                    if (appear)
-                        size.addConst(xPart, yPart, zPart)
-                    else
-                        size.addConst(xPart, yPart, zPart, -1)
+                    if (appear) size.addConst(xPart, yPart, zPart)
+                    else size.addConst(xPart, yPart, zPart, -1)
 
                 }
                 delay(delay)
@@ -363,15 +251,9 @@ class DrawerHelper(
         }
     }
 
-    suspend fun joinAnimation(node: ArNode) {
-        animationJobs[node]?.join()
-    }
-
     private fun Vector3.addConst(xValue: Float, yValue: Float, zValue: Float, modifier: Int = 1): Vector3 {
         return Vector3(
-            x + xValue * modifier,
-            y + yValue * modifier,
-            z + zValue * modifier
+            x + xValue * modifier, y + yValue * modifier, z + zValue * modifier
         )
     }
 }

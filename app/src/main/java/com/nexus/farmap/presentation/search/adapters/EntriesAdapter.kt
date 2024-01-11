@@ -11,16 +11,14 @@ import com.nexus.farmap.R
 
 class EntriesAdapter(
     private val onItemClick: (String) -> Unit
-) : ListAdapter<EntryItem, EntriesAdapter.ItemViewholder>(DiffCallback())  {
+) : ListAdapter<EntryItem, EntriesAdapter.ItemViewholder>(DiffCallback()) {
 
     private var rawList = listOf<EntryItem>()
     private var filter: String = ""
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewholder {
         return ItemViewholder(
-            onItemClick,
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.entry_item, parent, false)
+            onItemClick, LayoutInflater.from(parent.context).inflate(R.layout.entry_item, parent, false)
         )
     }
 
@@ -28,7 +26,8 @@ class EntriesAdapter(
         holder.bind(getItem(position))
     }
 
-    class ItemViewholder(private val onItemClick: (String) -> Unit, itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ItemViewholder(private val onItemClick: (String) -> Unit, itemView: View) :
+        RecyclerView.ViewHolder(itemView) {
         fun bind(item: EntryItem) = with(itemView) {
             val textView: TextView = this.findViewById(R.id.entry_number)
             val descTextView: TextView = this.findViewById(R.id.description_text)
@@ -41,17 +40,15 @@ class EntriesAdapter(
         }
     }
 
-    fun changeList(entries: List<EntryItem>){
+    fun changeList(entries: List<EntryItem>) {
         rawList = entries
         filter = ""
         submitList(rawList)
     }
 
-    fun applyFilter(filter: String){
+    fun applyFilter(filter: String) {
         this.filter = filter
-        submitList(rawList
-            .filter { it.number.startsWith(filter) }
-            .sortedBy { it.number.length })
+        submitList(rawList.filter { it.number.startsWith(filter) }.sortedBy { it.number.length })
     }
 }
 

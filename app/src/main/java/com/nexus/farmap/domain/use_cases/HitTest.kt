@@ -11,34 +11,28 @@ import io.github.sceneview.math.toNewQuaternion
 
 class HitTest {
 
-      operator fun invoke(arFrame: ArFrame, targetPos: Float2): Result<HitTestResult> {
-            arFrame.frame.let { frame ->
+    operator fun invoke(arFrame: ArFrame, targetPos: Float2): Result<HitTestResult> {
+        arFrame.frame.let { frame ->
 
             val hitResult1 = frame.hitTest(targetPos.x, targetPos.y)
-            val hitResult2 = frame.hitTest(targetPos.x-5, targetPos.y)
-            val hitResult3 = frame.hitTest(targetPos.x, targetPos.y+5)
+            val hitResult2 = frame.hitTest(targetPos.x - 5, targetPos.y)
+            val hitResult3 = frame.hitTest(targetPos.x, targetPos.y + 5)
 
-            if (hitResult1.isNotEmpty() && hitResult2.isNotEmpty() && hitResult3.isNotEmpty() ) {
+            if (hitResult1.isNotEmpty() && hitResult2.isNotEmpty() && hitResult3.isNotEmpty()) {
                 val result1 = hitResult1.first()
                 val result2 = hitResult2.first()
                 val result3 = hitResult3.first()
 
                 val pos1 = Vector3(
-                    result1.hitPose.tx(),
-                    result1.hitPose.ty(),
-                    result1.hitPose.tz()
+                    result1.hitPose.tx(), result1.hitPose.ty(), result1.hitPose.tz()
                 )
 
                 val pos2 = Vector3(
-                    result2.hitPose.tx(),
-                    result2.hitPose.ty(),
-                    result2.hitPose.tz()
+                    result2.hitPose.tx(), result2.hitPose.ty(), result2.hitPose.tz()
                 )
 
                 val pos3 = Vector3(
-                    result3.hitPose.tx(),
-                    result3.hitPose.ty(),
-                    result3.hitPose.tz()
+                    result3.hitPose.tx(), result3.hitPose.ty(), result3.hitPose.tz()
                 )
 
                 val vector1 = Vector3.subtract(pos1, pos2).normalized()
@@ -48,17 +42,15 @@ class HitTest {
                 vectorForward.y = 0f
 
                 val orientation = Quaternion.lookRotation(
-                    vectorForward,
-                    Vector3.up()
+                    vectorForward, Vector3.up()
                 ).toNewQuaternion()
 
                 val orientatedPosition = OrientatedPosition(pos1.toFloat3(), orientation)
 
                 return Result.success(HitTestResult(orientatedPosition, result1))
-            }
-            else {
+            } else {
                 return Result.failure(Exception("Null hit result"))
             }
+        }
     }
-      }
 }

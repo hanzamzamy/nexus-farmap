@@ -8,13 +8,9 @@ class NeighboursConverter {
         @TypeConverter
         @JvmStatic
         fun storedStringToNeighbours(value: String): MutableList<Int> {
-            return value
-                .split(",")
-                .filter { it != "" }
-                .mapIfNotEmpty {
-                    it.toInt()
-                }
-                .toMutableList()
+            return value.split(",").filter { it != "" }.mapIfNotEmpty {
+                it.toInt()
+            }.toMutableList()
         }
 
         @TypeConverter
@@ -28,10 +24,9 @@ class NeighboursConverter {
         @TypeConverter
         @JvmStatic
         fun storedStringtoQuaternion(value: String): Quaternion? {
-            return if (value == ""){
+            return if (value == "") {
                 null
-            }
-            else {
+            } else {
                 val data = value.split(" ").map { it.toFloat() }
                 Quaternion(data[0], data[1], data[2], data[3])
             }

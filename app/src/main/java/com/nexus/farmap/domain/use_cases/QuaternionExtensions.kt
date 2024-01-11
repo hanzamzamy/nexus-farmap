@@ -21,7 +21,6 @@ fun Quaternion.opposite(): Quaternion {
 fun Quaternion.Companion.lookRotation(forward: Vector3, up: Vector3 = Vector3.up()): Quaternion {
     val rotationFromAtoB = com.google.ar.sceneform.math.Quaternion.lookRotation(forward, up)
     return com.google.ar.sceneform.math.Quaternion.multiply(
-        rotationFromAtoB,
-        com.google.ar.sceneform.math.Quaternion.axisAngle(Vector3(1.0f, 0.0f, 0.0f), 270f)
+        rotationFromAtoB, com.google.ar.sceneform.math.Quaternion.axisAngle(Vector3(1.0f, 0.0f, 0.0f), 270f)
     ).toNewQuaternion()
 }

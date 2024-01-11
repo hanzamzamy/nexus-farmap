@@ -5,7 +5,7 @@ import com.nexus.farmap.domain.pathfinding.Path
 import com.nexus.farmap.domain.pathfinding.Pathfinder
 import com.nexus.farmap.domain.tree.Tree
 
-class AStarImpl: Pathfinder {
+class AStarImpl : Pathfinder {
 
     private val smoothPath = App.instance!!.smoothPath
 
@@ -26,13 +26,9 @@ class AStarImpl: Pathfinder {
 
             if (currentNode == finalNode) {
 
-                return Path(
-                    smoothPath(
-                        getPath(currentNode).map { aStarNode ->
-                            aStarNode.node
-                        }
-                    )
-                )
+                return Path(smoothPath(getPath(currentNode).map { aStarNode ->
+                    aStarNode.node
+                }))
             } else {
                 addAdjacentNodes(currentNode, openList, closedSet, finalNode, tree)
             }
@@ -63,10 +59,9 @@ class AStarImpl: Pathfinder {
             tree.getNode(nodeId)?.let { node ->
                 val nodeClosed = closedSet.find { it.node.id == nodeId }
                 val nodeOpen = openList.find { it.node.id == nodeId }
-                if ( nodeClosed == null && nodeOpen == null) {
+                if (nodeClosed == null && nodeOpen == null) {
                     checkNode(currentNode, AStarNode(node, finalNode), openList, closedSet)
-                }
-                else if (nodeOpen != null && nodeClosed == null) {
+                } else if (nodeOpen != null && nodeClosed == null) {
                     checkNode(currentNode, nodeOpen, openList, closedSet)
                 }
             }
@@ -74,12 +69,8 @@ class AStarImpl: Pathfinder {
         }
     }
 
-    //всем нодам устанавливается сложность в 1, можно ее убрать по идее
     private fun checkNode(
-        parentNode: AStarNode,
-        node: AStarNode,
-        openList: MutableList<AStarNode>,
-        closedSet: Set<AStarNode>
+        parentNode: AStarNode, node: AStarNode, openList: MutableList<AStarNode>, closedSet: Set<AStarNode>
     ) {
         if (!closedSet.contains(node)) {
             if (!openList.contains(node)) {
@@ -96,10 +87,5 @@ class AStarImpl: Pathfinder {
         return openList.sortedBy { node -> node.f }[0]
 
     }
-
-
-
-
-
 
 }

@@ -19,19 +19,14 @@ import kotlinx.coroutines.withContext
  * Analyzes the frames passed in from the camera and returns any detected text within the requested
  * crop region.
  */
-class TextAnalyzer: ObjectDetector {
+class TextAnalyzer : ObjectDetector {
 
-    private val options = TextRecognizerOptions
-        .Builder()
-        .build()
+    private val options = TextRecognizerOptions.Builder().build()
 
     private val detector = TextRecognition.getClient(options)
 
     override suspend fun analyze(
-        mediaImage: Image,
-        rotationDegrees: Int,
-        imageCropPercentages: Pair<Int, Int>,
-        displaySize: Pair<Int, Int>
+        mediaImage: Image, rotationDegrees: Int, imageCropPercentages: Pair<Int, Int>, displaySize: Pair<Int, Int>
     ): Result<DetectedObjectResult> {
 
         var text: Text?
@@ -40,9 +35,8 @@ class TextAnalyzer: ObjectDetector {
 
         withContext(Dispatchers.Default) {
 
-            // We requested a setTargetAspectRatio, but it's not guaranteed that's what the camera
-            // stack is able to support, so we calculate the actual ratio from the first frame to
-            // know how to appropriately crop the image we want to analyze.
+            // Calculate the actual ratio from the frame to appropriately
+            // crop the image.
             val imageHeight = mediaImage.height
             val imageWidth = mediaImage.width
 
@@ -51,20 +45,16 @@ class TextAnalyzer: ObjectDetector {
             val convertImageToBitmap = ImageUtils.convertYuv420888ImageToBitmap(mediaImage)
             cropRect = Rect(0, 0, imageWidth, imageHeight)
 
-            // If the image has a way wider aspect ratio than expected, crop less of the height so we
-            // don't end up cropping too much of the image. If the image has a way taller aspect ratio
-            // than expected, we don't have to make any changes to our cropping so we don't handle it
-            // here.
+            // In case image has wider aspect ratio, then crop less the height.
+            // In case image has taller aspect ratio, just handle it as is.
             var currentCropPercentages = imageCropPercentages
             if (actualAspectRatio > 3) {
                 val originalHeightCropPercentage = currentCropPercentages.first
                 val originalWidthCropPercentage = currentCropPercentages.second
-                currentCropPercentages =
-                    Pair(originalHeightCropPercentage / 2, originalWidthCropPercentage)
+                currentCropPercentages = Pair(originalHeightCropPercentage / 2, originalWidthCropPercentage)
             }
 
-            // If the image is rotated by 90 (or 270) degrees, swap height and width when calculating
-            // the crop.
+            // Image rotation compensation. Swapping height and width on landscape orientation.
             val cropPercentages = currentCropPercentages
             val heightCropPercent = cropPercentages.first
             val widthCropPercent = cropPercentages.second
@@ -74,73 +64,52 @@ class TextAnalyzer: ObjectDetector {
             }
 
             cropRect!!.inset(
-                (imageWidth * widthCrop / 2).toInt(),
-                (imageHeight * heightCrop / 2).toInt()
+                (imageWidth * widthCrop / 2).toInt(), (imageHeight * heightCrop / 2).toInt()
             )
 
-            val croppedBitmap =
-                ImageUtils.rotateAndCrop(convertImageToBitmap, rotationDegrees, cropRect!!)
+            val croppedBitmap = ImageUtils.rotateAndCrop(convertImageToBitmap, rotationDegrees, cropRect!!)
             croppedBit = croppedBitmap
 
             text = detector.process(InputImage.fromBitmap(croppedBitmap, 0)).await()
         }
-            return if (text != null) {
-                if (text!!.textBlocks.isNotEmpty()) {
-                    val textBlock = text!!.textBlocks.firstOrNull { textBlock ->
-                        filterFunction(textBlock)
-                    }
-                    if (textBlock != null) {
-                        val boundingBox = textBlock.boundingBox
-                        if (boundingBox != null) {
-//                            val xc = boundingBox.centerX() + cropRect!!.left
-//                            val yc = boundingBox.centerY() + cropRect!!.top
-
-                            val croppedRatio = Float2(
-                                boundingBox.centerX() / croppedBit!!.width.toFloat(),
-                                boundingBox.centerY() / croppedBit!!.height.toFloat()
-                            )
-
-//                            val croppedSizes = Float2(
-//                                xc / mediaImage.width.toFloat(),
-//                                yc / mediaImage.height.toFloat()
-//                            )
-
-                            //Camera coords to sceneView coords ratio
-//                            val xRatio = displaySize.first/croppedBit!!.width.toFloat()
-//                            val yRatio = displaySize.second/croppedBit!!.height.toFloat()
-
-                            //sceneView full coordinates
-//                            val x = xc * xRatio
-//                            val y = yc * yRatio
-                            val x = displaySize.first * croppedRatio.x
-                            val y = displaySize.second * croppedRatio.y
-
-                          //  val t = croppedSizes.x + originalSizes.x + croppedBitmapSizes.x
-
-                            Result.success(
-                                DetectedObjectResult(
-                                    label = textBlock.text,
-                                    centerCoordinate = Float2(x, y)
-                                    )
-                                )
-                        } else {
-                            Result.failure(Exception("Cant detect bounding box"))
-                        }
-                    }
-                    else {
-                        Result.failure(Exception("No digits found"))
-                    }
-
-                } else {
-                    Result.failure(Exception("No detected objects"))
+        return if (text != null) {
+            if (text!!.textBlocks.isNotEmpty()) {
+                val textBlock = text!!.textBlocks.firstOrNull { textBlock ->
+                    usingFormat(textBlock)
                 }
+                if (textBlock != null) {
+                    val boundingBox = textBlock.boundingBox
+                    if (boundingBox != null) {
+                        val croppedRatio = Float2(
+                            boundingBox.centerX() / croppedBit!!.width.toFloat(),
+                            boundingBox.centerY() / croppedBit!!.height.toFloat()
+                        )
+
+                        val x = displaySize.first * croppedRatio.x
+                        val y = displaySize.second * croppedRatio.y
+
+                        Result.success(
+                            DetectedObjectResult(
+                                label = textBlock.text, centerCoordinate = Float2(x, y)
+                            )
+                        )
+                    } else {
+                        Result.failure(Exception("Cant detect bounding box"))
+                    }
+                } else {
+                    Result.failure(Exception("No digits found"))
+                }
+
             } else {
-                Result.failure(Exception("Null text"))
+                Result.failure(Exception("No detected objects"))
             }
+        } else {
+            Result.failure(Exception("Null text"))
+        }
 
     }
 
-    private fun filterFunction(text: Text.TextBlock): Boolean {
+    private fun usingFormat(text: Text.TextBlock): Boolean {
         return text.text[0].isLetterOrDigit()
     }
 

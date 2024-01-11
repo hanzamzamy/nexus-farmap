@@ -40,7 +40,7 @@ class SearchFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val adapter = EntriesAdapter { number ->
-         processSearchResult(number)
+        processSearchResult(number)
     }
 
     private val args: SearchFragmentArgs by navArgs()
@@ -49,18 +49,16 @@ class SearchFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val callback: OnBackPressedCallback =
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    findNavController().popBackStack()
-                }
+        val callback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                findNavController().popBackStack()
             }
+        }
         requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
@@ -68,9 +66,9 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        with(binding.searchInput){
+        with(binding.searchInput) {
             doOnTextChanged { text, _, _, _ ->
-                    adapter.applyFilter(text.toString())
+                adapter.applyFilter(text.toString())
             }
             setOnEditorActionListener { v, actionId, event ->
                 var handled = false
@@ -80,19 +78,18 @@ class SearchFragment : Fragment() {
                 }
                 handled
             }
-            binding.searchLayout.hint =
-                if (changeType == TYPE_END) getString(R.string.to)
-                else getString(R.string.from)
+            binding.searchLayout.hint = if (changeType == TYPE_END) getString(R.string.to)
+            else getString(R.string.from)
         }
 
         binding.entryRecyclerView.adapter = adapter
         binding.entryRecyclerView.layoutManager = LinearLayoutManager(
-                requireActivity().applicationContext
+            requireActivity().applicationContext
         )
 
         var entriesList = listOf<EntryItem>()
         viewLifecycleOwner.lifecycleScope.launch {
-            withContext(Dispatchers.IO){
+            withContext(Dispatchers.IO) {
                 entriesList = mainModel.entriesNumber.map { number ->
                     EntryItem(number, destinationDesc(number, requireActivity().applicationContext))
                 }
@@ -111,14 +108,15 @@ class SearchFragment : Fragment() {
                             binding.searchInput.viewHideInput()
                             findNavController().popBackStack()
                         }
+
                         is SearchUiEvent.SearchInvalid -> {
                             binding.searchLayout.error = resources.getString(R.string.incorrect_number)
                             binding.searchInput.viewRequestInput()
                         }
                     }
                 }
-                }
             }
+        }
     }
 
     private fun processSearchResult(number: String) {
