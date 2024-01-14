@@ -7,6 +7,16 @@
     android:layout_gravity="bottom"
     tools:context="com.nexus.farmap.presentation.router.RouterFragment">
 
+    <Button
+            android:id="@+id/admin_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:enabled="true"
+            android:text="@string/admin"
+            android:textSize="10sp" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
