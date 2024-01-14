@@ -51,6 +51,10 @@ class RouterFragment : Fragment() {
             binding.adminPanel.isGone = true
         }
 
+        binding.adminButton.setOnClickListener {
+            toggleAdmin()
+        }
+
         binding.deleteButton.setOnClickListener {
             removeSelectedNode()
         }
@@ -135,6 +139,10 @@ class RouterFragment : Fragment() {
 
     private fun changeLinkPlacementMode() {
         mainModel.onEvent(MainEvent.ChangeLinkMode)
+    }
+
+    private fun toggleAdmin() {
+        if (App.mode == App.ADMIN_MODE) App.mode = App.USER_MODE else App.mode = App.ADMIN_MODE
     }
 
     private fun removeSelectedNode() {

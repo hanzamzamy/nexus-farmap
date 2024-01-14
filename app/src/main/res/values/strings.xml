@@ -30,6 +30,7 @@
     <string name="scan">Wait for the dots to appear. Try to point camera to area that contain features and move gently.
     </string>
     <string name="room">"Room No. "</string>
+    <string name="admin">Toggle Admin Mode</string>
 
 
 </resources>

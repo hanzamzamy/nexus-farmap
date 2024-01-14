@@ -67,6 +67,6 @@ class App : Application() {
         const val DATABASE_DIR = "database/nodes.db"
         const val ADMIN_MODE = "ADMIN"
         const val USER_MODE = "USER"
-        const val mode = ADMIN_MODE
+        var mode = ADMIN_MODE
     }
 }

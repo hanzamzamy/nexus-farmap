@@ -7,17 +7,16 @@
     tools:context="com.nexus.farmap.presentation.scanner.ScannerFragment">
 
     <ImageView
-        android:id="@+id/borders_image"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:scaleType="fitXY"
-        app:layout_constraintBottom_toTopOf="@+id/guideline5"
-        app:layout_constraintEnd_toStartOf="@+id/guideline3"
-        app:layout_constraintStart_toStartOf="@+id/guideline2"
-        app:layout_constraintTop_toTopOf="@+id/guideline4"
-        app:layout_constraintVertical_bias="0.498"
-        app:srcCompat="@drawable/scan_area" />
-
+            android:id="@+id/borders_image"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toTopOf="@+id/guideline5"
+            app:layout_constraintEnd_toStartOf="@+id/guideline3"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintTop_toTopOf="@+id/guideline4"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/scan_area" app:layout_constraintHorizontal_bias="0.0"/>
     <TextView
         android:id="@+id/scan_text"
         android:layout_width="0dp"
