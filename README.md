@@ -7,3 +7,5 @@ We implement Augmented-Reality (AR) to create better User Experience (UX).
 
 https://github.com/hanzamzamy/nexus-farmap/assets/72683891/97336d88-5e58-4a55-9e07-b82c95351e8f
 
+## Procedure
+Just compile it as usual. We use firebase's free plan, be aware of quotas.
